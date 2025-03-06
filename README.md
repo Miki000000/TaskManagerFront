@@ -1,32 +1,90 @@
-# SolidStart
+# Task Manager Frontend
 
-Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
+A modern web application built with SolidJS for managing customer calls and notes. This application provides a clean interface for tracking customer interactions and maintaining important business notes.
 
-## Creating a project
+## Features
+
+- User Authentication System
+- Call Management
+  - Create, edit, and delete call records
+  - Track customer problems and solutions
+  - Search and filter call history
+- Note Management
+  - Create and manage business notes
+  - Track customer contacts and situations
+  - Searchable note database
+- Role-based Access Control
+  - Admin and User roles
+  - Different view permissions based on roles
+- Responsive Design with DaisyUI
+
+## Tech Stack
+
+- [SolidJS](https://www.solidjs.com/) - Core frontend framework
+- [Solid Start](https://start.solidjs.com) - Meta-framework for SolidJS
+- [TailwindCSS](https://tailwindcss.com/) - Styling
+- [DaisyUI](https://daisyui.com/) - UI Components
+- [JWT](https://jwt.io/) - Authentication
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies:
 
 ```bash
-# create a new project in the current directory
-npm init solid@latest
-
-# create a new project in my-app
-npm init solid@latest my-app
+bun install
 ```
 
-## Developing
+3. Set up environment variables:
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```env
+API_URL=http://your-api-url:8080/
+```
+
+4. Run the development server:
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+bun run dev
 ```
 
-## Building
+## Building for Production
 
-Solid apps are built with _presets_, which optimise your project for deployment to different environments.
+Build the application:
 
-By default, `npm run build` will generate a Node app that you can run with `npm start`. To use a different preset, add it to the `devDependencies` in `package.json` and specify in your `app.config.js`.
+```bash
+bun run build
+```
 
-## This project was created with the [Solid CLI](https://solid-cli.netlify.app)
+Start the production server:
+
+```bash
+bun start
+```
+
+## Docker Deployment
+
+Build the Docker image:
+
+```bash
+docker build -t task-manager-frontend .
+```
+
+Run the container:
+
+```bash
+docker run -p 3000:3000 task-manager-frontend
+```
+
+## Environment Variables
+
+- `API_URL` - Backend API URL (default: http://localhost:8080/)
+- `NODE_ENV` - Environment mode (development/production)
+
+## Project Structure
+
+- `/src`
+  - `/components` - Reusable UI components
+  - `/hooks` - Custom hooks for authentication and data fetching
+  - `/routes` - Application routes and pages
+  - `/shared` - Shared utilities and constants
+  - `/utils` - Helper functions
