@@ -48,7 +48,6 @@ export default function Login() {
               class="input input-bordered w-full"
               onInput={(e) => setPassword(e.currentTarget.value)}
               required
-              minLength={6}
             />
           </div>
 

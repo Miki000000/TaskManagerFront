@@ -60,7 +60,12 @@ const NoteTable: Component = () => {
     return filteredItems().slice(startIndex, endIndex);
   };
 
-  const totalPages = () => Math.ceil(filteredItems().length / itemsPerPage);
+  const totalPages = () => {
+    return filteredItems()?.length
+      ? Math.ceil(filteredItems().length / itemsPerPage)
+      : 1;
+  };
+
   const truncateText = (text: string, limit: number) => {
     if (text.length <= limit) return text;
     return text.substring(0, limit) + "...";
@@ -73,11 +78,11 @@ const NoteTable: Component = () => {
         <InfoCard data={selectedItem()} onClose={() => setSelectedItem(null)} />
       )}
       <div class="mb-4 flex justify-between items-center">
-        <div class="flex gap-4 items-center justify-between">
+        <div class="flex gap-4 items-center justify-between w-auto">
           <input
             type="text"
-            placeholder="Search by title, company or date..."
-            class="input input-bordered w-full max-w-xs"
+            placeholder="Search by title, company, username or date..."
+            class="input input-bordered w-[25rem]"
             value={searchQuery()}
             onInput={(e) => {
               setSearchQuery(e.currentTarget.value);
@@ -146,15 +151,19 @@ const NoteTable: Component = () => {
           <button
             class="join-item btn"
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage() === 1}
+            disabled={currentPage() === 1 || !filteredItems()?.length}
           >
             «
           </button>
-          <button class="join-item btn">Page {currentPage()}</button>
+          <button class="join-item btn">
+            {filteredItems()?.length ? `Page ${currentPage()}` : "No items"}
+          </button>
           <button
             class="join-item btn"
             onClick={() => setCurrentPage((p) => Math.min(totalPages(), p + 1))}
-            disabled={currentPage() === totalPages()}
+            disabled={
+              currentPage() === totalPages() || !filteredItems()?.length
+            }
           >
             »
           </button>

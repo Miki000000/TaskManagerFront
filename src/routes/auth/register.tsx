@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import ErrorModal from "../../components/ErrorModal";
+import SuccessModal from "../../components/SuccessModal";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function Register() {
@@ -10,7 +11,7 @@ export default function Register() {
   const [password, setPassword] = createSignal("");
   const [repeatPassword, setRepeatPassword] = createSignal("");
   const [role, setRole] = createSignal("");
-  const { error, register } = useAuth();
+  const { error, successMessage, register } = useAuth();
 
   const isValidEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -20,7 +21,7 @@ export default function Register() {
     return (
       isValidEmail(email()) &&
       username().length >= 3 &&
-      password().length >= 6 &&
+      password().length >= 8 &&
       password() === repeatPassword() &&
       role()
     );
@@ -34,6 +35,7 @@ export default function Register() {
   return (
     <div class="min-h-screen flex items-center justify-center bg-base-200">
       <ErrorModal message={error()} />
+      <SuccessModal message={successMessage()} />
       <div class="card w-96 bg-base-100 shadow-xl">
         <form onSubmit={handleSubmit} class="card-body">
           <h2 class="card-title justify-center text-2xl font-bold mb-6">
