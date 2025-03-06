@@ -2,6 +2,8 @@ import { createSignal, type Component, Show } from "solid-js";
 import type { Call } from "../types";
 import { RequestHandler } from "../shared/RequestHandler";
 import { useNavigate } from "@solidjs/router";
+import ErrorModal from "./ErrorModal";
+import SuccessModal from "./SuccessModal";
 
 type Props = {
   item?: Call;
@@ -11,8 +13,26 @@ type Props = {
 const CallModal: Component<Props> = (props) => {
   const [isOpen, setIsOpen] = createSignal(false);
   const [isClosing, setIsClosing] = createSignal(false);
+  const [error, setError] = createSignal("");
+  const [successMessage, setSuccessMessage] = createSignal("");
   const dialogId = `call_modal_${props.item?.id || "new"}`;
   const navigate = useNavigate();
+
+  const showErrorModal = (errorMessage: string) => {
+    setError(errorMessage);
+    const modal = document.getElementById("error_modal") as HTMLDialogElement;
+    if (modal) modal.showModal();
+  };
+
+  const showSuccessModal = (message: string) => {
+    setSuccessMessage(message);
+    const modal = document.getElementById("success_modal") as HTMLDialogElement;
+    if (modal) modal.showModal();
+    setTimeout(() => {
+      setIsOpen(false);
+      if (props.onSuccess) props.onSuccess();
+    }, 500);
+  };
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
@@ -32,9 +52,27 @@ const CallModal: Component<Props> = (props) => {
       method: props.item ? "PUT" : "POST",
       data: newCall,
       authorization: token || "",
-      fallback: (error: string) => {
-        console.error("Failed to create call:", error);
-      },
+      fallback: showErrorModal,
+      success: showSuccessModal,
+      navigate: navigate,
+    });
+
+    if (response) {
+      props.onSuccess?.();
+      setIsOpen(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!props.item?.id) return;
+
+    const token = localStorage.getItem("authToken");
+    const response = await RequestHandler<Call>({
+      route: `api/call/${props.item.id}`,
+      method: "DELETE",
+      authorization: token || "",
+      fallback: showErrorModal,
+      success: showSuccessModal,
       navigate: navigate,
     });
 
@@ -59,6 +97,8 @@ const CallModal: Component<Props> = (props) => {
 
   return (
     <>
+      <ErrorModal message={error()} />
+      <SuccessModal message={successMessage()} />
       <button class="btn btn-sm" onClick={openModal}>
         {props.item ? "Edit" : "Create"}
       </button>
@@ -121,9 +161,20 @@ const CallModal: Component<Props> = (props) => {
               </div>
 
               <div class="modal-action flex justify-between">
-                <button type="button" class="btn" onClick={closeModal}>
-                  Cancel
-                </button>
+                <div class="flex gap-2">
+                  <button type="button" class="btn" onClick={closeModal}>
+                    Cancel
+                  </button>
+                  {props.item && (
+                    <button
+                      type="button"
+                      class="btn btn-error"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
                 <button type="submit" class="btn btn-primary">
                   Save Changes
                 </button>
