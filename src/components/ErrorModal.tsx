@@ -4,7 +4,7 @@ interface ErrorModalProps {
   message: string;
 }
 
-const ErrorModal: Component<ErrorModalProps> = (props) => {
+const ErrorModal: Component<ErrorModalProps> = (props: { message: string }) => {
   return (
     <dialog id="error_modal" class="modal">
       <div class="modal-box">
