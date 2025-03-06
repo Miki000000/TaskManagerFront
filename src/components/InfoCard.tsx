@@ -19,8 +19,16 @@ const InfoCard: Component<InfoCardProps> = (props) => {
     if (value instanceof Date) {
       return formatDate(value.toISOString());
     }
-    if (typeof value === "string" && value.match(/^\d{4}-\d{2}-\d{2}/)) {
-      return formatDate(value);
+    if (typeof value === "string") {
+      if (value.match(/^\d{4}-\d{2}-\d{2}/)) {
+        return formatDate(value);
+      }
+      return value.split("\n").map((line, i) => (
+        <>
+          {i > 0 && <br />}
+          {line}
+        </>
+      ));
     }
     return value;
   };
