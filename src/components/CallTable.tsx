@@ -79,30 +79,24 @@ const CallTable: Component = () => {
       {selectedItem() && (
         <InfoCard data={selectedItem()} onClose={() => setSelectedItem(null)} />
       )}
-      <div class="mb-4 flex items-center">
-        <div class="flex gap-4 items-center w-auto">
+      <div class="flex flex-col h-[calc(100vh-12rem)]">
+        <div class="mb-4 flex flex-col sm:flex-row justify-between items-center gap-4">
           <input
             type="text"
             placeholder="Search by name, company, username or date..."
-            class="input input-bordered w-[25rem]"
+            class="input input-bordered w-full sm:w-[25rem]"
             value={searchQuery()}
             onInput={(e) => {
               setSearchQuery(e.currentTarget.value);
-              setCurrentPage(1); // Reset to first page when searching
+              setCurrentPage(1);
             }}
           />
           {isAdmin() && (
-            <details
-              class="dropdown dropdown-start absolute right-[12rem]"
-              ref={dropdownRef}
-            >
-              <summary role="button" class="btn m-1 w-[10rem]">
+            <details class="dropdown dropdown-end" ref={dropdownRef}>
+              <summary role="button" class="btn w-[10rem]">
                 View Options
               </summary>
-              <ul
-                tabindex="0"
-                class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-sm"
-              >
+              <ul class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-sm">
                 <li>
                   <a onClick={() => handleEndpointChange("api/call")}>
                     My Calls
@@ -117,63 +111,65 @@ const CallTable: Component = () => {
             </details>
           )}
         </div>
-      </div>
-      <div class="h-[65vh] overflow-y-auto overflow-x-auto">
-        <table class="table table-pin-rows w-full">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Company</th>
-              <th>Problem</th>
-              <th>Solution</th>
-              <th>Date</th>
-              <th>Created By</th>
-              <th>Edit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {getCurrentItems().map((item) => (
-              <tr
-                class="hover:bg-base-200 cursor-pointer"
-                onClick={() => setSelectedItem(item)}
-              >
-                <td>{truncateText(item.name, 20)}</td>
-                <td>{truncateText(item.company, 20)}</td>
-                <td>{truncateText(item.problem, 30)}</td>
-                <td>{truncateText(item.solution, 30)}</td>
-                <td>{formatDate(item.creationDate!)}</td>
-                <td>{item.username || "N/A"}</td>
-                <td onClick={(e) => e.stopPropagation()}>
-                  <CallModal item={item} onSuccess={fetchCalls} />
-                </td>
+        <div class="flex-1 overflow-y-auto overflow-x-auto">
+          <table class="table table-pin-rows w-full min-w-[800px]">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Company</th>
+                <th>Problem</th>
+                <th>Solution</th>
+                <th>Date</th>
+                <th>Created By</th>
+                <th>Edit</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div class="flex justify-between items-center">
-        <div class="join mt-4 flex justify-center">
-          <button
-            class="join-item btn"
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage() === 1 || !filteredItems()?.length}
-          >
-            «
-          </button>
-          <button class="join-item btn">
-            {filteredItems()?.length ? `Page ${currentPage()}` : "No items"}
-          </button>
-          <button
-            class="join-item btn"
-            onClick={() => setCurrentPage((p) => Math.min(totalPages(), p + 1))}
-            disabled={
-              currentPage() === totalPages() || !filteredItems()?.length
-            }
-          >
-            »
-          </button>
+            </thead>
+            <tbody>
+              {getCurrentItems().map((item) => (
+                <tr
+                  class="hover:bg-base-200 cursor-pointer"
+                  onClick={() => setSelectedItem(item)}
+                >
+                  <td>{truncateText(item.name, 20)}</td>
+                  <td>{truncateText(item.company, 20)}</td>
+                  <td>{truncateText(item.problem, 30)}</td>
+                  <td>{truncateText(item.solution, 30)}</td>
+                  <td>{formatDate(item.creationDate!)}</td>
+                  <td>{item.username || "N/A"}</td>
+                  <td onClick={(e) => e.stopPropagation()}>
+                    <CallModal item={item} onSuccess={fetchCalls} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <CallModal onSuccess={fetchCalls} />
+        <div class="flex justify-between items-center">
+          <div class="join mt-4 flex justify-center">
+            <button
+              class="join-item btn"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage() === 1 || !filteredItems()?.length}
+            >
+              «
+            </button>
+            <button class="join-item btn">
+              {filteredItems()?.length ? `Page ${currentPage()}` : "No items"}
+            </button>
+            <button
+              class="join-item btn"
+              onClick={() =>
+                setCurrentPage((p) => Math.min(totalPages(), p + 1))
+              }
+              disabled={
+                currentPage() === totalPages() || !filteredItems()?.length
+              }
+            >
+              »
+            </button>
+          </div>
+          <CallModal onSuccess={fetchCalls} />
+        </div>
       </div>
     </>
   );
