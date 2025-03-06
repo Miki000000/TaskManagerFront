@@ -99,14 +99,18 @@ const CallModal: Component<Props> = (props) => {
     <>
       <ErrorModal message={error()} />
       <SuccessModal message={successMessage()} />
-      <button class="btn btn-sm" onClick={openModal}>
+      <button class="btn w-[7rem]" onClick={openModal}>
         {props.item ? "Edit" : "Create"}
       </button>
 
       <Show when={isOpen()}>
-        <dialog id={dialogId} class="modal modal-bottom sm:modal-middle" open>
+        <dialog
+          id={dialogId}
+          class="modal modal-bottom sm:modal-middle fixed"
+          open
+        >
           <div
-            class={`modal-box ${
+            class={`modal-box relative z-20 ${
               isClosing() ? "animate-modal-out" : "animate-modal-in"
             }`}
           >
@@ -182,8 +186,9 @@ const CallModal: Component<Props> = (props) => {
             </form>
           </div>
           <div
-            class={`modal-backdrop
-              ${isClosing() ? "animate-backdrop-out" : "animate-backdrop-in"}`}
+            class={`modal-backdrop fixed inset-0 bg-black bg-opacity-50 ${
+              isClosing() ? "animate-backdrop-out" : "animate-backdrop-in"
+            }`}
             onClick={closeModal}
           ></div>
         </dialog>
