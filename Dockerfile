@@ -29,8 +29,5 @@ COPY package.json ./
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Set environment to production
-ENV NODE_ENV=production
-
 # Command to run the application
 CMD ["bun", "start"]
