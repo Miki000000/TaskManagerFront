@@ -8,8 +8,8 @@ RUN bun install --production --frozen-lockfile
 
 # Copy only necessary files for the build
 COPY tsconfig.json .
-COPY tailwind.config.js .
-COPY postcss.config.js .
+COPY tailwind.config.cjs .
+COPY postcss.config.mjs .
 COPY src/ ./src/
 COPY public/ ./public/
 
