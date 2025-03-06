@@ -13,7 +13,6 @@ export function useTableData<T>(initialEndpoint: string) {
 
     const response = await RequestHandler<T[]>({
       route: endpoint(),
-      data: null,
       method: "GET",
       authorization: token ?? "",
       fallback: (error) => setErrorMessage(error),
