@@ -48,7 +48,7 @@ const NoteModal: Component<Props> = (props) => {
 
     const token = localStorage.getItem("authToken");
     const response = await RequestHandler<Note>({
-      route: "api/note",
+      route: props.item ? `api/note/${props.item.id}` : "api/note",
       method: props.item ? "PUT" : "POST",
       data: newNote,
       authorization: token || "",
@@ -58,7 +58,7 @@ const NoteModal: Component<Props> = (props) => {
     });
 
     if (response) {
-      props.onSuccess?.();
+      if (props.onSuccess) props.onSuccess();
       setIsOpen(false);
     }
   };
@@ -110,7 +110,9 @@ const NoteModal: Component<Props> = (props) => {
               isClosing() ? "animate-modal-out" : "animate-modal-in"
             }`}
           >
-            <h3 class="font-bold text-lg mb-4">Edit Note</h3>
+            <h3 class="font-bold text-lg mb-4">
+              {props.item ? "Edit" : "Create"} Note
+            </h3>
             <form onSubmit={handleSubmit} class="space-y-4">
               <div class="form-control w-full">
                 <label class="label">
@@ -120,7 +122,7 @@ const NoteModal: Component<Props> = (props) => {
                   type="text"
                   name="title"
                   class="input input-bordered w-full"
-                  value={props.item?.title}
+                  value={props.item?.title || ""}
                 />
               </div>
 
@@ -132,7 +134,7 @@ const NoteModal: Component<Props> = (props) => {
                   type="text"
                   name="company"
                   class="input input-bordered w-full"
-                  value={props.item?.company}
+                  value={props.item?.company || ""}
                 />
               </div>
 
@@ -144,7 +146,7 @@ const NoteModal: Component<Props> = (props) => {
                   type="text"
                   name="contact"
                   class="input input-bordered w-full"
-                  value={props.item?.contact}
+                  value={props.item?.contact || ""}
                 />
               </div>
 
@@ -155,7 +157,7 @@ const NoteModal: Component<Props> = (props) => {
                 <textarea
                   name="situation"
                   class="textarea textarea-bordered w-full min-h-[100px]"
-                  value={props.item?.situation}
+                  value={props.item?.situation || ""}
                 />
               </div>
 

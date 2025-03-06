@@ -21,6 +21,11 @@ const NoteTable: Component = () => {
     setEndpoint: updateEndpoint,
   } = useTableData<Note>(endpoint());
 
+  // Add a debug log to check the data
+  createMemo(() => {
+    console.log("Notes data:", notes());
+  });
+
   const [currentPage, setCurrentPage] = createSignal(1);
   const [searchQuery, setSearchQuery] = createSignal("");
   const itemsPerPage = 20;
@@ -42,24 +47,33 @@ const NoteTable: Component = () => {
 
   const filteredItems = createMemo(() => {
     const notesData = notes();
-    if (!notes || !Array.isArray(notes)) return [];
-    return notes().filter((note) => {
-      const query = searchQuery().toLowerCase();
-      return (
-        note.title.toLowerCase().includes(query) ||
-        note.company.toLowerCase().includes(query) ||
-        note.username?.toLowerCase().includes(query) ||
-        formatDate(note.creationDate || Date.now().toString())
-          .toLowerCase()
-          .includes(query)
-      );
-    });
+    if (!notesData) return [];
+
+    try {
+      return notesData.filter((note) => {
+        const query = searchQuery().toLowerCase();
+        return (
+          note.title?.toLowerCase().includes(query) ||
+          note.company?.toLowerCase().includes(query) ||
+          note.username?.toLowerCase().includes(query) ||
+          (note.creationDate &&
+            formatDate(note.creationDate).toLowerCase().includes(query))
+        );
+      });
+    } catch (error) {
+      console.error("Error filtering notes:", error);
+      return [];
+    }
   });
 
+  // Modify getCurrentItems to be more defensive
   const getCurrentItems = () => {
+    const items = filteredItems();
+    if (!items || !Array.isArray(items)) return [];
+
     const startIndex = (currentPage() - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return filteredItems().slice(startIndex, endIndex);
+    return items.slice(startIndex, endIndex);
   };
 
   const totalPages = () => {
@@ -79,6 +93,10 @@ const NoteTable: Component = () => {
       {selectedItem() && (
         <InfoCard data={selectedItem()} onClose={() => setSelectedItem(null)} />
       )}
+
+      {/* Add debug output */}
+      <pre class="hidden">{JSON.stringify(notes(), null, 2)}</pre>
+
       <div class="mb-4 flex justify-between items-center">
         <div class="flex gap-4 items-center justify-between w-auto">
           <input
@@ -134,11 +152,13 @@ const NoteTable: Component = () => {
                 class="hover:bg-base-200 cursor-pointer"
                 onClick={() => setSelectedItem(item)}
               >
-                <td>{truncateText(item.title, 30)}</td>
-                <td>{truncateText(item.company, 30)}</td>
-                <td>{truncateText(item.contact, 30)}</td>
-                <td>{truncateText(item.situation, 30)}</td>
-                <td>{formatDate(item.creationDate!)}</td>
+                <td>{truncateText(item.title || "", 30)}</td>
+                <td>{truncateText(item.company || "", 30)}</td>
+                <td>{truncateText(item.contact || "", 30)}</td>
+                <td>{truncateText(item.situation || "", 30)}</td>
+                <td>
+                  {item.creationDate ? formatDate(item.creationDate) : "N/A"}
+                </td>
                 <td>{item.username || "N/A"}</td>
                 <td onClick={(e) => e.stopPropagation()}>
                   <NoteModal item={item} onSuccess={fetchNotes} />
