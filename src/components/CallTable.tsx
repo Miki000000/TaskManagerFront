@@ -45,6 +45,7 @@ const CallTable: Component = () => {
       return (
         call.name.toLowerCase().includes(query) ||
         call.company.toLowerCase().includes(query) ||
+        call.username?.toLowerCase().includes(query) ||
         formatDate(call.creationDate || Date.now().toString())
           .toLowerCase()
           .includes(query)
@@ -119,6 +120,7 @@ const CallTable: Component = () => {
               <th>Problem</th>
               <th>Solution</th>
               <th>Date</th>
+              <th>Created By</th>
               <th>Edit</th>
             </tr>
           </thead>
@@ -133,6 +135,7 @@ const CallTable: Component = () => {
                 <td>{truncateText(item.problem, 30)}</td>
                 <td>{truncateText(item.solution, 30)}</td>
                 <td>{formatDate(item.creationDate!)}</td>
+                <td>{item.username || "N/A"}</td>
                 <td onClick={(e) => e.stopPropagation()}>
                   <CallModal item={item} onSuccess={fetchCalls} />
                 </td>

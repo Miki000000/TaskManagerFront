@@ -4,6 +4,7 @@ export type Call = {
   name: string;
   company: string;
   userId?: string;
+  username?: string;
   id?: number;
   creationDate?: string;
 };
@@ -14,6 +15,7 @@ export type Note = {
   contact: string;
   situation: string;
   userId?: string;
+  username?: string;
   id?: number;
   creationDate?: string;
 };

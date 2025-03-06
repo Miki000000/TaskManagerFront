@@ -46,6 +46,7 @@ const NoteTable: Component = () => {
       return (
         note.title.toLowerCase().includes(query) ||
         note.company.toLowerCase().includes(query) ||
+        note.username?.toLowerCase().includes(query) ||
         formatDate(note.creationDate || Date.now().toString())
           .toLowerCase()
           .includes(query)
@@ -116,6 +117,7 @@ const NoteTable: Component = () => {
               <th>Contact</th>
               <th>Situation</th>
               <th>Date</th>
+              <th>Created By</th>
               <th>Edit</th>
             </tr>
           </thead>
@@ -130,6 +132,7 @@ const NoteTable: Component = () => {
                 <td>{truncateText(item.contact, 30)}</td>
                 <td>{truncateText(item.situation, 30)}</td>
                 <td>{formatDate(item.creationDate!)}</td>
+                <td>{item.username || "N/A"}</td>
                 <td onClick={(e) => e.stopPropagation()}>
                   <NoteModal item={item} onSuccess={fetchNotes} />
                 </td>
