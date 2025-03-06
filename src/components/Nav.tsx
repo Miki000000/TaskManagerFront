@@ -47,7 +47,6 @@ export default function Nav() {
           </li>
         </ul>
       </div>
-      z
       <div class="flex justify-around items-center gap-4">
         {isAdmin() && (
           <A href="/auth/register" class="btn">
