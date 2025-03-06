@@ -24,7 +24,7 @@ export default function Nav() {
           Celta Tasks
         </a>
       </div>
-      <div class="flex-none pr-[5rem]">
+      <div class="flex-none pl-[15rem]">
         <ul class="menu menu-horizontal px-1">
           <li>
             <A target="_blank" href="https://www.celtasistemas.com.br/">
@@ -55,6 +55,9 @@ export default function Nav() {
         )}
         <A href="/auth/login" class="btn">
           Logout
+        </A>
+        <A href="/auth/password" class="btn">
+          Change Password
         </A>
       </div>
     </nav>
