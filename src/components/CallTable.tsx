@@ -40,7 +40,10 @@ const CallTable: Component = () => {
   };
 
   const filteredItems = createMemo(() => {
-    return calls()?.filter((call) => {
+    const callsData = calls();
+    if (!callsData || !Array.isArray(callsData)) return [];
+
+    return callsData.filter((call) => {
       const query = searchQuery().toLowerCase();
       return (
         call.name.toLowerCase().includes(query) ||

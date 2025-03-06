@@ -41,6 +41,8 @@ const NoteTable: Component = () => {
   };
 
   const filteredItems = createMemo(() => {
+    const notesData = notes();
+    if (!notes || !Array.isArray(notes)) return [];
     return notes().filter((note) => {
       const query = searchQuery().toLowerCase();
       return (
