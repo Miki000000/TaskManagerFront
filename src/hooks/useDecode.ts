@@ -19,5 +19,15 @@ export function useDecode() {
     }
   };
 
-  return [decode];
+  const getUsername = (token: string): string => {
+    try {
+      const decoded: Claims = jwtDecode<Claims>(token);
+      return decoded.sub || "";
+    } catch (error) {
+      console.error("Failed to extract username from token:", error);
+      return "";
+    }
+  };
+
+  return [decode, getUsername] as const;
 }
