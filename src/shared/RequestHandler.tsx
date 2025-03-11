@@ -23,7 +23,7 @@ export const RequestHandler = async <T,>({
 }: {
   route: string;
   data?: unknown;
-  method: "POST" | "PUT" | "DELETE" | "GET";
+  method: "POST" | "PUT" | "DELETE" | "GET" | "PATCH";
   authorization?: string;
   fallback: (error: string) => void;
   success?: (message: string) => void;
@@ -61,12 +61,11 @@ export const RequestHandler = async <T,>({
 
     const errorResponse = body as ErrorResponse;
     throw new Error(
-      `Request failed with status ${response.status} and message ${
-        errorResponse.message || errorResponse.error
-      }`
+      errorResponse.message || errorResponse.error || "Unknown error occurred"
     );
   } catch (error: any) {
-    fallback(`Request failed, message: ${error.message}`);
+    const errorMessage = error.message || "An unexpected error occurred";
+    fallback(errorMessage);
     return {} as T;
   }
 };
