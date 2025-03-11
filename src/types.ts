@@ -19,3 +19,15 @@ export type Note = {
   id?: number;
   creationDate?: string;
 };
+
+export type Task = {
+  title: string;
+  description: string;
+  companies: string[];
+  attributedUser: string;
+  createdBy: string;
+  id?: number;
+  creationDate?: string;
+  completedDate?: string;
+  completed?: boolean;
+};
