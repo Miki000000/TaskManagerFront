@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: light --default, dark --prefersdark, cupcake, luxury;
+  themes: light --default, dark, cupcake, luxury, bumblebee, retro;
 }
 @layer components {
   .modal {
@@ -75,19 +75,8 @@
 .animate-backdrop-out {
   animation: backdrop-out 0.2s ease-in;
 }
-:root {
-  --background-rgb: 214, 219, 220;
-  --foreground-rgb: 0, 0, 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-rgb: 0, 0, 0;
-    --foreground-rgb: 255, 255, 255;
-  }
-}
 
 body {
-  background: rgb(var(--background-rgb));
-  color: rgb(var(--foreground-rgb));
+  background: hsl(var(--b1));
+  color: hsl(var(--bc));
 }
