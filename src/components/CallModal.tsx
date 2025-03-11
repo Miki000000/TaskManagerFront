@@ -87,7 +87,7 @@ const CallModal: Component<Props> = (props) => {
     setTimeout(() => {
       setIsOpen(false);
       setIsClosing(false);
-    }, 200); // Match animation duration
+    }, 200);
   };
 
   const openModal = () => {
@@ -186,7 +186,7 @@ const CallModal: Component<Props> = (props) => {
             </form>
           </div>
           <div
-            class={`modal-backdrop fixed inset-0 bg-black bg-opacity-50 ${
+            class={`modal-backdrop fixed inset-0 bg-base-300 bg-opacity-70 ${
               isClosing() ? "animate-backdrop-out" : "animate-backdrop-in"
             }`}
             onClick={closeModal}

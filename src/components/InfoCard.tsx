@@ -35,7 +35,7 @@ const InfoCard: Component<InfoCardProps> = (props) => {
 
   return (
     <Show when={props.data}>
-      <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div class="fixed inset-0 bg-base-300 bg-opacity-70 flex items-center justify-center z-50 p-4">
         <div class="card bg-base-100 shadow-xl relative min-w-[320px] w-auto max-w-2xl max-h-[90vh]">
           <button
             onClick={props.onClose}
@@ -53,7 +53,7 @@ const InfoCard: Component<InfoCardProps> = (props) => {
                         {formatKey(key)}
                       </h3>
                       <div class="mt-2">
-                        <p class="text-base whitespace-normal break-words">
+                        <p class="text-base text-base-content whitespace-normal break-words">
                           {formatValue(value)}
                         </p>
                       </div>

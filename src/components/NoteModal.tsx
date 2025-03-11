@@ -99,7 +99,7 @@ const NoteModal: Component<Props> = (props) => {
     <>
       <ErrorModal message={error()} />
       <SuccessModal message={successMessage()} />
-      <button class="btn btn-sm" onClick={openModal}>
+      <button class="btn w-[7rem]" onClick={openModal}>
         {props.item ? "Edit" : "Create"}
       </button>
 
@@ -187,7 +187,7 @@ const NoteModal: Component<Props> = (props) => {
             </form>
           </div>
           <div
-            class={`modal-backdrop fixed inset-0 bg-black bg-opacity-50 ${
+            class={`modal-backdrop fixed inset-0 bg-base-300 bg-opacity-70 ${
               isClosing() ? "animate-backdrop-out" : "animate-backdrop-in"
             }`}
             onClick={closeModal}

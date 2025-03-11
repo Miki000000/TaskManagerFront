@@ -6,6 +6,7 @@ import ErrorModal from "./ErrorModal";
 import InfoCard from "./InfoCard";
 import { useTableData } from "../hooks/useTableData";
 import { formatDate } from "../utils/dateFormatter";
+import AdminViewOptions, { ViewOption } from "./AdminViewOptions";
 
 const CallTable: Component = () => {
   const [decoder] = useDecode();
@@ -27,7 +28,9 @@ const CallTable: Component = () => {
   onMount(() => {
     const token = localStorage.getItem("authToken");
     if (token) {
-      setAdmin(decoder(token).info.role === "ADMIN");
+      const isUserAdmin = decoder(token).info.role === "ADMIN";
+      console.log("CallTable - User is admin:", isUserAdmin); // Add debug log
+      setAdmin(isUserAdmin);
       fetchCalls();
     }
   });
@@ -38,6 +41,11 @@ const CallTable: Component = () => {
     fetchCalls();
     dropdownRef?.removeAttribute("open"); // Close dropdown
   };
+
+  const adminViewOptions: ViewOption[] = [
+    { label: "My Calls", endpoint: "api/call" },
+    { label: "All Calls", endpoint: "api/call/all" },
+  ];
 
   const filteredItems = createMemo(() => {
     const callsData = calls();
@@ -91,37 +99,24 @@ const CallTable: Component = () => {
               setCurrentPage(1);
             }}
           />
-          {isAdmin() && (
-            <details class="dropdown dropdown-end" ref={dropdownRef}>
-              <summary role="button" class="btn w-[10rem]">
-                View Options
-              </summary>
-              <ul class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-sm">
-                <li>
-                  <a onClick={() => handleEndpointChange("api/call")}>
-                    My Calls
-                  </a>
-                </li>
-                <li>
-                  <a onClick={() => handleEndpointChange("api/call/all")}>
-                    All Calls
-                  </a>
-                </li>
-              </ul>
-            </details>
-          )}
+          <AdminViewOptions
+            isAdmin={isAdmin()}
+            options={adminViewOptions}
+            onEndpointChange={handleEndpointChange}
+            dropdownRef={(el) => (dropdownRef = el)}
+          />
         </div>
         <div class="flex-1 overflow-y-auto overflow-x-auto">
-          <table class="table table-pin-rows w-full min-w-[800px]">
+          <table class="table table-pin-rows">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Company</th>
-                <th>Problem</th>
-                <th>Solution</th>
-                <th>Date</th>
-                <th>Created By</th>
-                <th>Edit</th>
+                <th class="w-[15%]">Name</th>
+                <th class="w-[15%]">Company</th>
+                <th class="w-[20%]">Problem</th>
+                <th class="w-[20%]">Solution</th>
+                <th class="w-[10%]">Date</th>
+                <th class="w-[12%]">Created By</th>
+                <th class="w-[8%]">Edit</th>
               </tr>
             </thead>
             <tbody>
@@ -130,12 +125,22 @@ const CallTable: Component = () => {
                   class="hover:bg-base-200 cursor-pointer"
                   onClick={() => setSelectedItem(item)}
                 >
-                  <td>{truncateText(item.name, 20)}</td>
-                  <td>{truncateText(item.company, 20)}</td>
-                  <td>{truncateText(item.problem, 30)}</td>
-                  <td>{truncateText(item.solution, 30)}</td>
-                  <td>{formatDate(item.creationDate!)}</td>
-                  <td>{item.username || "N/A"}</td>
+                  <td class="max-w-[200px] truncate">{item.name || "N/A"}</td>
+                  <td class="max-w-[200px] truncate">
+                    {item.company || "N/A"}
+                  </td>
+                  <td class="max-w-[250px] truncate">
+                    {item.problem || "N/A"}
+                  </td>
+                  <td class="max-w-[250px] truncate">
+                    {item.solution || "N/A"}
+                  </td>
+                  <td class="whitespace-nowrap">
+                    {item.creationDate ? formatDate(item.creationDate) : "N/A"}
+                  </td>
+                  <td class="max-w-[150px] truncate">
+                    {item.username || "N/A"}
+                  </td>
                   <td onClick={(e) => e.stopPropagation()}>
                     <CallModal item={item} onSuccess={fetchCalls} />
                   </td>
@@ -147,17 +152,17 @@ const CallTable: Component = () => {
         <div class="flex justify-between items-center">
           <div class="join mt-4 flex justify-center">
             <button
-              class="join-item btn"
+              class="join-item btn btn-sm min-w-[40px]"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage() === 1 || !filteredItems()?.length}
             >
               «
             </button>
-            <button class="join-item btn">
+            <button class="join-item btn btn-sm min-w-[100px]">
               {filteredItems()?.length ? `Page ${currentPage()}` : "No items"}
             </button>
             <button
-              class="join-item btn"
+              class="join-item btn btn-sm min-w-[40px]"
               onClick={() =>
                 setCurrentPage((p) => Math.min(totalPages(), p + 1))
               }

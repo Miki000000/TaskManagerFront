@@ -2,10 +2,11 @@ import { type Component, createSignal, createMemo, onMount } from "solid-js";
 import type { Note } from "../types";
 import NoteModal from "./NoteModal";
 import ErrorModal from "./ErrorModal";
-import InfoCard from "./InfoCard"; // Add this import
+import InfoCard from "./InfoCard";
 import { useTableData } from "../hooks/useTableData";
 import { useDecode } from "../hooks/useDecode";
 import { formatDate } from "../utils/dateFormatter";
+import AdminViewOptions, { ViewOption } from "./AdminViewOptions";
 
 const NoteTable: Component = () => {
   const [decoder] = useDecode();
@@ -33,7 +34,9 @@ const NoteTable: Component = () => {
   onMount(() => {
     const token = localStorage.getItem("authToken");
     if (token) {
-      setAdmin(decoder(token).info.role === "ADMIN");
+      const isUserAdmin = decoder(token).info.role === "ADMIN";
+      console.log("NoteTable - User is admin:", isUserAdmin); // Add debug log
+      setAdmin(isUserAdmin);
       fetchNotes();
     }
   });
@@ -44,6 +47,11 @@ const NoteTable: Component = () => {
     fetchNotes();
     dropdownRef?.removeAttribute("open"); // Close dropdown
   };
+
+  const adminViewOptions: ViewOption[] = [
+    { label: "My Notes", endpoint: "api/note" },
+    { label: "All Notes", endpoint: "api/note/all" },
+  ];
 
   const filteredItems = createMemo(() => {
     const notesData = notes();
@@ -106,37 +114,24 @@ const NoteTable: Component = () => {
               setCurrentPage(1);
             }}
           />
-          {isAdmin() && (
-            <details class="dropdown dropdown-end" ref={dropdownRef}>
-              <summary role="button" class="btn w-[10rem]">
-                View Options
-              </summary>
-              <ul class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-sm">
-                <li>
-                  <a onClick={() => handleEndpointChange("api/note")}>
-                    My Notes
-                  </a>
-                </li>
-                <li>
-                  <a onClick={() => handleEndpointChange("api/note/all")}>
-                    All Notes
-                  </a>
-                </li>
-              </ul>
-            </details>
-          )}
+          <AdminViewOptions
+            isAdmin={isAdmin()}
+            options={adminViewOptions}
+            onEndpointChange={handleEndpointChange}
+            dropdownRef={(el) => (dropdownRef = el)}
+          />
         </div>
         <div class="flex-1 overflow-y-auto overflow-x-auto">
-          <table class="table table-pin-rows w-full min-w-[800px]">
+          <table class="table table-pin-rows">
             <thead>
               <tr>
-                <th>Title</th>
-                <th>Company</th>
-                <th>Contact</th>
-                <th>Situation</th>
-                <th>Date</th>
-                <th>Created By</th>
-                <th>Edit</th>
+                <th class="w-[15%]">Title</th>
+                <th class="w-[15%]">Company</th>
+                <th class="w-[20%]">Contact</th>
+                <th class="w-[20%]">Situation</th>
+                <th class="w-[10%]">Date</th>
+                <th class="w-[12%]">Created By</th>
+                <th class="w-[8%]">Edit</th>
               </tr>
             </thead>
             <tbody>
@@ -145,14 +140,22 @@ const NoteTable: Component = () => {
                   class="hover:bg-base-200 cursor-pointer"
                   onClick={() => setSelectedItem(item)}
                 >
-                  <td>{truncateText(item.title || "", 30)}</td>
-                  <td>{truncateText(item.company || "", 30)}</td>
-                  <td>{truncateText(item.contact || "", 30)}</td>
-                  <td>{truncateText(item.situation || "", 30)}</td>
-                  <td>
+                  <td class="max-w-[200px] truncate">{item.title || "N/A"}</td>
+                  <td class="max-w-[200px] truncate">
+                    {item.company || "N/A"}
+                  </td>
+                  <td class="max-w-[250px] truncate">
+                    {item.contact || "N/A"}
+                  </td>
+                  <td class="max-w-[250px] truncate">
+                    {item.situation || "N/A"}
+                  </td>
+                  <td class="whitespace-nowrap">
                     {item.creationDate ? formatDate(item.creationDate) : "N/A"}
                   </td>
-                  <td>{item.username || "N/A"}</td>
+                  <td class="max-w-[150px] truncate">
+                    {item.username || "N/A"}
+                  </td>
                   <td onClick={(e) => e.stopPropagation()}>
                     <NoteModal item={item} onSuccess={fetchNotes} />
                   </td>
@@ -164,17 +167,17 @@ const NoteTable: Component = () => {
         <div class="flex justify-between items-center">
           <div class="join mt-4 flex justify-center">
             <button
-              class="join-item btn"
+              class="join-item btn btn-sm min-w-[40px]"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage() === 1 || !filteredItems()?.length}
             >
               «
             </button>
-            <button class="join-item btn">
+            <button class="join-item btn btn-sm min-w-[100px]">
               {filteredItems()?.length ? `Page ${currentPage()}` : "No items"}
             </button>
             <button
-              class="join-item btn"
+              class="join-item btn btn-sm min-w-[40px]"
               onClick={() =>
                 setCurrentPage((p) => Math.min(totalPages(), p + 1))
               }
